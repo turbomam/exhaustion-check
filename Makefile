@@ -47,3 +47,8 @@ exhaustion_report.yaml:
 		--output-yaml-file $@ \
 		--schema-path https://raw.githubusercontent.com/microbiomedata/nmdc-schema/main/src/schema/nmdc.yaml
 
+biosample_data_pretty_sorted.yaml: biosample_data.yaml
+	poetry run pretty-sort-yaml \
+		-i $< \
+		-o $@
+
