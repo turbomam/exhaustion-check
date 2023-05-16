@@ -39,3 +39,11 @@ qa: safety lint test ## for CI/CD. Runs all code quality tools
 
 qa-local: format qa ## for local development (before checking in). Formats code and runs qa
 .PHONY: qa-local
+
+exhaustion_report.yaml:
+	poetry run exhaustion-check \
+		--class-name "Biosample" \
+		--instance-yaml-file biosample_data.yaml \
+		--output-yaml-file $@ \
+		--schema-path https://raw.githubusercontent.com/microbiomedata/nmdc-schema/main/src/schema/nmdc.yaml
+
