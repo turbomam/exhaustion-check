@@ -104,3 +104,4 @@ include = '\.pyi?$'
 [tool.poetry.scripts]
 exhaustion-check = "exhaustion_check.exhaustion_check:validate_instance"
 pretty-sort-yaml = "exhaustion_check.pretty_sort_yaml:load_yaml_file"
+get-first-of-first = "exhaustion_check.get_first_of_first:cli"

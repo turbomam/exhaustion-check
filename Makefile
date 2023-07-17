@@ -40,15 +40,36 @@ qa: safety lint test ## for CI/CD. Runs all code quality tools
 qa-local: format qa ## for local development (before checking in). Formats code and runs qa
 .PHONY: qa-local
 
-exhaustion_report.yaml:
-	poetry run exhaustion-check \
-		--class-name "Biosample" \
-		--instance-yaml-file biosample_data.yaml \
-		--output-yaml-file $@ \
-		--schema-path https://raw.githubusercontent.com/microbiomedata/nmdc-schema/main/src/schema/nmdc.yaml
+# # # # add and import a project.Makefile ?
 
-biosample_data_pretty_sorted.yaml: biosample_data.yaml
+scripts-all: scripts-clean Biosample-exhasutive-FoF-sorted-exhaustion_report.yaml
+
+scripts-clean:
+	rm -rf Biosample-exhasutive-FoF.yaml
+	rm -rf Biosample-exhasutive-FoF-sorted.yaml
+	rm -rf Biosample-exhasutive-FoF-sorted-exhaustion_report.yaml
+	rm -rf Database-biosample-exhasutive.yaml
+
+# or use curl ?
+# or bundle something? would need to bundle data and schema to eliminate network traffic
+Database-biosample-exhasutive.yaml:
+	wget -O $@ "https://raw.githubusercontent.com/microbiomedata/nmdc-schema/main/src/data/valid/Database-biosample-exhasutive.yaml"
+
+Biosample-exhasutive-FoF.yaml: Database-biosample-exhasutive.yaml
+	poetry run get-first-of-first \
+		--input_data $< \
+		--output_data $@ \
+
+Biosample-exhasutive-FoF-sorted.yaml: Biosample-exhasutive-FoF.yaml
 	poetry run pretty-sort-yaml \
 		-i $< \
 		-o $@
+
+Biosample-exhasutive-FoF-sorted-exhaustion_report.yaml: Biosample-exhasutive-FoF-sorted.yaml
+	poetry run exhaustion-check \
+		--class-name "Biosample" \
+		--instance-yaml-file $< \
+		--output-yaml-file $@ \
+		--schema-path https://raw.githubusercontent.com/microbiomedata/nmdc-schema/main/src/schema/nmdc.yaml
+
 
